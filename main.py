@@ -8,7 +8,7 @@ import uvicorn
 
 
 # =============================================================================
-# BRANDSYNC AI - CORE LLM & NLP COMPLIANCE ENGINE (DOCUMENT-ALIGNED)
+# CORE LLM & NLP
 # =============================================================================
 class BrandSyncComplianceEngine:
     """
@@ -98,7 +98,7 @@ class BrandSyncComplianceEngine:
 
 
 # =============================================================================
-# FASTAPI BACKEND & REFERENCE UI
+# FASTAPI BACKEND 
 # =============================================================================
 app = FastAPI(title="BrandSync AI", description="LLM & NLP Compliance Backend")
 
@@ -118,7 +118,9 @@ def analyze_endpoint(payload: AnalysisRequest):
         forbidden_terms=payload.forbidden_terms.split(",")
     )
     return engine.verify_content_compliance(payload.content)
-
+# =============================================================================
+# Frontend UI
+# =============================================================================
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
