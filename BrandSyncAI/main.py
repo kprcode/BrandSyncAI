@@ -100,6 +100,10 @@ class BrandSyncComplianceEngine:
 # FASTAPI BACKEND 
 # =============================================================================
 app = FastAPI(title="BrandSync AI", description="LLM & NLP Compliance Backend")
+app = FastAPI(
+    title="BrandSync AI",
+    description="LLM & NLP Compliance Backend"
+)
 
 
 class AnalysisRequest(BaseModel):
@@ -109,35 +113,58 @@ class AnalysisRequest(BaseModel):
     forbidden_terms: str
 
 
+# TEXT CONTENT ANALYSIS API
 @app.post("/api/v1/analyze")
 def analyze_endpoint(payload: AnalysisRequest):
+
     engine = BrandSyncComplianceEngine(
         brand_name=payload.brand_name,
         brand_tone=payload.tone,
         forbidden_terms=payload.forbidden_terms.split(",")
     )
+
     return engine.verify_content_compliance(payload.content)
 
 
+# PDF DOCUMENT ANALYSIS API
 @app.post("/api/v1/analyze-pdf")
 async def analyze_pdf(file: UploadFile = File(...)):
+
     if not file.filename or not file.filename.lower().endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Please upload a PDF file.")
+        raise HTTPException(
+            status_code=400,
+            detail="Please upload a PDF file."
+        )
 
     contents = await file.read()
 
     if len(contents) > 10 * 1024 * 1024:
-        raise HTTPException(status_code=400, detail="PDF must be smaller than 10 MB.")
+        raise HTTPException(
+            status_code=400,
+            detail="PDF must be smaller than 10 MB."
+        )
 
     if not contents.startswith(b"%PDF"):
-        raise HTTPException(status_code=400, detail="The uploaded file is not a valid PDF.")
+        raise HTTPException(
+            status_code=400,
+            detail="The uploaded file is not a valid PDF."
+        )
 
     try:
-        with pymupdf.open(stream=contents, filetype="pdf") as document:
-            extracted_text = "\n".join(page.get_text() for page in document)
+        with pymupdf.open(
+            stream=contents,
+            filetype="pdf"
+        ) as document:
+
+            extracted_text = "\n".join(
+                page.get_text() for page in document
+            )
 
     except Exception:
-        raise HTTPException(status_code=400, detail="Could not read this PDF. Please try another file.")
+        raise HTTPException(
+            status_code=400,
+            detail="Could not read this PDF. Please try another file."
+        )
 
     if not extracted_text.strip():
         raise HTTPException(
@@ -148,12 +175,21 @@ async def analyze_pdf(file: UploadFile = File(...)):
     engine = BrandSyncComplianceEngine(
         brand_name="Acme Corp",
         brand_tone="Professional & Authoritative",
-        forbidden_terms=["cheap", "revolutionary", "guaranteed 100%"]
+        forbidden_terms=[
+            "cheap",
+            "revolutionary",
+            "guaranteed 100%"
+        ]
     )
 
     result = engine.verify_content_compliance(extracted_text)
+
     result["filename"] = file.filename
+
     return result
+
+
+
 
 # =============================================================================
 # FRONTEND UI - BRANDSYNC AI
