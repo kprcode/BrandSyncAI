@@ -99,7 +99,6 @@ class BrandSyncComplianceEngine:
 # =============================================================================
 # FASTAPI BACKEND 
 # =============================================================================
-app = FastAPI(title="BrandSync AI", description="LLM & NLP Compliance Backend")
 app = FastAPI(
     title="BrandSync AI",
     description="LLM & NLP Compliance Backend"
